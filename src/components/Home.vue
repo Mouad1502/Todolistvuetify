@@ -1,149 +1,96 @@
 <template>
-  <v-container>
-    <v-row class="text-center">
-      <v-col cols="12">
-        <v-img
-          :src="require('../assets/logo.svg')"
-          class="my-3"
-          contain
-          height="200"
-        />
-      </v-col>
-
-      <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to the Vuetify 3 Beta
-        </h1>
-
-
-        <p class="subheading font-weight-regular">
-          For help and collaboration with other Vuetify developers,
-          <br>please join our online
-          <a
-            href="https://community.vuetifyjs.com"
-            target="_blank"
-          >Discord Community</a>
-        </p>
-      </v-col>
-
-      <v-col
-        class="mb-5"
-        cols="12"
-      >
-        <h2 class="headline font-weight-bold mb-5">
-          What's next?
-        </h2>
-
-        <v-row justify="center">
-          <a
-            v-for="(next, i) in whatsNext"
-            :key="i"
-            :href="next.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ next.text }}
-          </a>
-        </v-row>
-      </v-col>
-
-      <v-col
-        class="mb-5"
-        cols="12"
-      >
-        <h2 class="headline font-weight-bold mb-5">
-          Important Links
-        </h2>
-
-        <v-row justify="center">
-          <a
-            v-for="(link, i) in importantLinks"
-            :key="i"
-            :href="link.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ link.text }}
-          </a>
-        </v-row>
-      </v-col>
-
-      <v-col
-        class="mb-5"
-        cols="12"
-      >
-        <h2 class="headline font-weight-bold mb-5">
-          Ecosystem
-        </h2>
-
-        <v-row justify="center">
-          <a
-            v-for="(eco, i) in ecosystem"
-            :key="i"
-            :href="eco.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ eco.text }}
-          </a>
-        </v-row>
+  <v-container fluid>
+    <v-row >
+      <v-col v-for="(task, index) in tasks" :key="index" cols="6">
+        <v-card class="bg-cyan-darken-2">
+          <v-card-title>{{ task.title }}</v-card-title>
+          <v-card-subtitle>{{ task.subtitle }}</v-card-subtitle>
+          <v-card-text>{{ task.text }}</v-card-text>
+          <v-card-actions>
+            <v-checkbox
+              v-model="ex4"
+              label="Done"
+              color="indigo"
+              value="indigo"
+              hide-details
+            ></v-checkbox>
+            <v-btn @click="removeTask(index)" icon active>
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </v-card-actions>
+        </v-card>
       </v-col>
     </v-row>
-  </v-container>
+  
+    <v-col cols="auto" align="center" justify="center">
+      <v-btn size="x-large" @click="showAddTaskDialog">Add Task</v-btn>
+    </v-col>
+
+    <!-- Add Task Dialog -->
+    <v-dialog v-model="addTaskDialog" max-width="500px">
+      <v-card>
+        <v-card-title>Add New Task</v-card-title>
+        <v-card-text>
+          <v-text-field v-model="newTaskTitle" label="Task Title"></v-text-field>
+          <v-textarea v-model="newTaskText" label="Task Details"></v-textarea>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="cancelAddTask">Cancel</v-btn>
+          <v-btn @click="saveNewTask" color="primary">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+</v-container>
 </template>
 
 <script>
-
 export default {
   name: 'HelloWorld',
 
-  data: () => ({
-    ecosystem: [
-      {
-        text: 'vuetify-loader',
-        href: 'https://github.com/vuetifyjs/vuetify-loader/tree/next',
-      },
-      {
-        text: 'github',
-        href: 'https://github.com/vuetifyjs/vuetify/tree/next',
-      },
-      {
-        text: 'awesome-vuetify',
-        href: 'https://github.com/vuetifyjs/awesome-vuetify',
-      },
-    ],
-    importantLinks: [
-      {
-        text: 'Chat',
-        href: 'https://community.vuetifyjs.com',
-      },
-      {
-        text: 'Made with Vuetify',
-        href: 'https://madewithvuejs.com/vuetify',
-      },
-      {
-        text: 'Twitter',
-        href: 'https://twitter.com/vuetifyjs',
-      },
-      {
-        text: 'Articles',
-        href: 'https://medium.com/vuetify',
-      },
-    ],
-    whatsNext: [
-      {
-        text: 'Explore components',
-        href: 'https://vuetifyjs.com',
-      },
-      {
-        text: 'Roadmap',
-        href: 'https://vuetifyjs.com/introduction/roadmap/',
-      },
-      {
-        text: 'Frequently Asked Questions',
-        href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
-      },
-    ],
-  }),
-}
+  data() {
+    return {
+      ex4: ['indigo'],
+      tasks: [
+        {
+          title: 'Card title',
+          subtitle: this.getFormattedDate(),
+          text: '...'
+        }
+      ],
+      addTaskDialog: false,
+      newTaskTitle: '',
+      newTaskText: ''
+    };
+  },
+  methods: {
+    showAddTaskDialog() {
+      this.addTaskDialog = true;
+    },
+    cancelAddTask() {
+      this.addTaskDialog = false;
+      this.newTaskTitle = '';
+      this.newTaskText = '';
+    },
+    saveNewTask() {
+      if (this.newTaskTitle.trim() !== '' && this.newTaskText.trim() !== '') {
+        this.tasks.push({
+          title: this.newTaskTitle,
+          subtitle: this.getFormattedDate(),
+          text: this.newTaskText
+        });
+        this.addTaskDialog = false;
+        this.newTaskTitle = '';
+        this.newTaskText = '';
+      }
+    },
+    getFormattedDate() {
+      const currentDate = new Date();
+      return currentDate.toLocaleString();
+    },
+    removeTask(index) {
+      this.tasks.splice(index, 1);
+    }
+  }
+};
 </script>
