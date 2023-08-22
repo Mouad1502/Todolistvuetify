@@ -29,10 +29,11 @@
     <!-- Add Task Dialog -->
     <v-dialog v-model="addTaskDialog" max-width="500px">
       <v-card>
-        <v-card-title>Add New Task</v-card-title>
+        <v-card-title align="center">Add New Task</v-card-title>
         <v-card-text>
           <v-text-field v-model="newTaskTitle" label="Task Title"></v-text-field>
           <v-textarea v-model="newTaskText" label="Task Details"></v-textarea>
+          <v-alert class="bg-red-darken-2" v-model="alert" text="Make sure both of the fields are not empty"></v-alert>
         </v-card-text>
         <v-card-actions>
           <v-btn @click="cancelAddTask">Cancel</v-btn>
@@ -58,6 +59,7 @@ export default {
           text: '...'
         }
       ],
+      alert:false,
       addTaskDialog: false,
       newTaskTitle: '',
       newTaskText: ''
@@ -69,6 +71,7 @@ export default {
     },
     cancelAddTask() {
       this.addTaskDialog = false;
+      this.alert=false;
       this.newTaskTitle = '';
       this.newTaskText = '';
     },
@@ -82,6 +85,9 @@ export default {
         this.addTaskDialog = false;
         this.newTaskTitle = '';
         this.newTaskText = '';
+        this.alert=false; 
+      }else{
+        this.alert=true;
       }
     },
     getFormattedDate() {
